@@ -10,5 +10,9 @@ def testing(description)
 end
 
 def expects(expected_result)
-  Test::Reckon::Expectation.new(expected_result, @_test_description)
+  Test::Reckon::Expectation.new(expected_result, true, @_test_description)
+end
+
+def rejects(expected_result)
+  Test::Reckon::Expectation.new(expected_result, false, @_test_description)
 end
