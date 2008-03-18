@@ -12,9 +12,15 @@ module Test #:nodoc
       
       def add_failure(test_description, message)
         file, line = caller(2)[0].split(/:/, 2)
-        $stderr.puts "#{File.expand_path(file)}:#{line.to_i}"
+        file = File.expand_path(file)
+        line = line.to_i
+        
+        lines = File.readlines(file)
+        line_in_error = lines[line-1]
+        
+        $stderr.puts "#{file}:#{line}"
         $stderr.puts "  * #{test_description}"
-        $stderr.puts "  expected: TODO"
+        $stderr.puts "  tested: #{line_in_error.strip}"
         $stderr.puts "  but: #{message}"
         @failures += 1
       end
