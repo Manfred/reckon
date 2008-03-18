@@ -5,6 +5,9 @@ def testing(description)
   saved = Marshal.dump instance_variables.inject({}) { |saved, name| saved[name] = instance_variable_get(name); saved }
   @_test_description = @_test_description ? "#{@_test_description} #{description}" : description
   yield
+rescue Exception => e
+  Test::Reckon::Reporter.instance.add_exception(@_test_description, e)
+ensure
   @_test_description = nil
   Marshal.load(saved).each { |name, value| instance_variable_set(name, value) }
 end
