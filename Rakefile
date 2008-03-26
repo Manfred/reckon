@@ -47,7 +47,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'https://dwerg.net/svn/reckon'
   s.required_ruby_version = '>= 1.8.6'
   
-  s.files = %w(README LICENSE Rakefile) + Dir.glob("lib/**/*") +  Dir.glob("examples/**/*")
+  s.files = %w(README LICENSE) + Dir.glob("lib/**/*") +  Dir.glob("examples/**/*")
   s.require_path = "lib"
 end
 
