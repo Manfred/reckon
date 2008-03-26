@@ -22,12 +22,11 @@ module Test # :nodoc:
     class Expectation
       VERB_MAP = {
         '==' => { true => '==', false => '!=' },
-        '>=' => { true => '>=', false => '=<' },
-        '<=' => { true => '<=', false => '=>' },
-        '>'  => { true => '>',  false => '<'  },
-        '<'  => { true => '<',  false => '>'  },
         '=~' => { true => '=~', false => '!~' },
-        '!~' => { true => '!~', false => '=~' }
+        '>=' => { true => '>=', false => '<' },
+        '<=' => { true => '<=', false => '>' },
+        '>'  => { true => '>',  false => '<='  },
+        '<'  => { true => '<',  false => '>='  }
       }
       
       def initialize(subject, test_result, test_description)
@@ -47,7 +46,7 @@ module Test # :nodoc:
       #
       # The result of the test is compared to the expected +test_result+ and the result is reported to the Reporter singleton.
       def test(verb, object)
-        if (@subject.send(verb, object)) == @test_result
+        if !!@subject.send(verb, object) == @test_result
           Test::Reckon::Reporter.instance.add_success
         else
           Test::Reckon::Reporter.instance.add_failure(@test_description,
@@ -119,7 +118,7 @@ module Test # :nodoc:
       end
       
       def find_exception(backtrace, calltrace)
-        filename = calltrace[1].split(':').first
+        filename = calltrace[0].split(':').first
         backtrace.find do |line|
           line.split(':').first == filename
         end

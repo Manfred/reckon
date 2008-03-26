@@ -1,38 +1,4 @@
-PROJECT_ROOT = File.expand_path('../', File.dirname(__FILE__))
-$:.unshift(File.join(PROJECT_ROOT, 'lib'))
-
-require 'test/unit'
-require 'test/reckon'
-
-require 'rubygems' rescue nil
-require 'mocha'
-
-class Test::Unit::TestCase
-  def assert_difference(expression, difference = 1, message = nil, &block)
-    wrapped_expression = lambda { eval(expression) }
-    original_value = wrapped_expression.call
-    yield
-    assert_equal original_value + difference, wrapped_expression.call, message
-  end
-end
-
-class OutputMock
-  require 'singleton'
-  include Singleton
-  
-  attr_accessor :messages
-  
-  def initialize
-    @messages = []
-  end
-  
-  def puts(message)
-    self.messages << message
-  end
-  alias :write :puts
-end
-
-$stderr = OutputMock.instance
+require File.dirname(__FILE__) + '/shared.rb'
 
 class ReporterTest < Test::Unit::TestCase
   def test_should_be_singleton
@@ -82,10 +48,23 @@ class ReporterInstanceTest < Test::Unit::TestCase
     assert_match /^\s+exception:\s#</, output.messages[-1]
   end
   
-  def test_print_stats
+  def test_print_stats_without_errors
+    reporter.instance_eval { @successes = @failures = @exceptions = 0 }
     assert_difference("output.messages.length", +1) do
       reporter.print_stats
     end
     assert_equal "0 passed, 0 failed, 0 broken", output.messages.last
+  end
+  
+  def test_print_stats_with_errors
+    reporter.instance_eval do
+      @successes = 1
+      @failures = 2
+      @exceptions = 3
+    end
+    assert_difference("output.messages.length", +2) do
+      reporter.print_stats
+    end
+    assert_equal "1 passed, 2 failed, 3 broken", output.messages.last
   end
 end
