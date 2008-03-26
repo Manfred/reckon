@@ -118,7 +118,7 @@ module Test # :nodoc:
       end
       
       def find_exception(backtrace, calltrace)
-        filename = calltrace[0].split(':').first
+        filename = calltrace[1].split(':').first
         backtrace.find do |line|
           line.split(':').first == filename
         end

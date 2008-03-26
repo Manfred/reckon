@@ -33,6 +33,7 @@ class ReporterInstanceTest < Test::Unit::TestCase
   end
   
   def test_should_add_exceptions
+    reporter.expects(:find_exception).returns("#{__FILE__}:#{__LINE__+2}")
     begin
       raise ArgumentError, "For testing purposes"
     rescue ArgumentError => e
