@@ -5,7 +5,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
 NAME = 'reckon'
-VERSIE = '0.1'
+VERSIE = '0.2'
 RDOC_OPTS = ['--quiet', '--title', "Reckon – Leaner automated testing",
     "--opname", "index.html",
     "--line-numbers",
