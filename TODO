@@ -1,3 +1,3 @@
-* Test core with assertions
+* Add documentation to expects, rejects and testing.
 * Add: expects(ArgumentError) { code_that_raised_argument_error }
 * Targeted test runs: ruby some_test.rb -n /exceptions/
