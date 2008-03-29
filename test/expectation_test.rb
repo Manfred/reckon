@@ -81,3 +81,43 @@ class ExpectationStringTest < Test::Unit::TestCase
     expectation =~ /food/
   end
 end
+
+class ExpectationBlockTest < Test::Unit::TestCase
+  TEST_DESCRIPTION = "Expectations should work"
+  
+  def test_should_report_succes_if_expected_exception_is_raised
+    expectation = Test::Reckon::Expectation.new(nil, true, TEST_DESCRIPTION) { raise ArgumentError }
+    Test::Reckon::Reporter.instance.expects(:add_success)
+    expectation.raises(ArgumentError)
+  end
+  
+  def test_should_report_failure_if_exception_other_than_expected_is_raised
+    expectation = Test::Reckon::Expectation.new(nil, true, TEST_DESCRIPTION) { raise ArgumentError }
+    Test::Reckon::Reporter.instance.expects(:add_failure).with(TEST_DESCRIPTION, "Expected TypeError but got an ArgumentError")
+    expectation.raises(TypeError)
+  end
+  
+  def test_should_report_failure_if_no_exception_is_raised_but_was_expected
+    expectation = Test::Reckon::Expectation.new(nil, true, TEST_DESCRIPTION) { }
+    Test::Reckon::Reporter.instance.expects(:add_failure).with(TEST_DESCRIPTION, "Expected TypeError but no exception was raised")
+    expectation.raises(TypeError)
+  end
+  
+  def test_should_report_success_if_other_exception_than_rejected_exception_was_raised
+    expectation = Test::Reckon::Expectation.new(nil, false, TEST_DESCRIPTION) { raise TypeError }
+    Test::Reckon::Reporter.instance.expects(:add_success)
+    expectation.raises(ArgumentError)
+  end
+  
+  def test_should_report_success_if_no_exception_was_raised_but_one_was_rejected
+    expectation = Test::Reckon::Expectation.new(nil, false, TEST_DESCRIPTION) {  }
+    Test::Reckon::Reporter.instance.expects(:add_success)
+    expectation.raises(ArgumentError)
+  end
+  
+  def test_should_report_failure_if_rejected_exception_is_raised
+    expectation = Test::Reckon::Expectation.new(nil, false, TEST_DESCRIPTION) { raise ArgumentError }
+    Test::Reckon::Reporter.instance.expects(:add_failure).with(TEST_DESCRIPTION, "Rejected exception ArgumentError was raised")
+    expectation.raises(ArgumentError)
+  end
+end

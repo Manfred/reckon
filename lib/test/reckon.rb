@@ -29,8 +29,8 @@ module Test # :nodoc:
         '<'  => { true => '<',  false => '>='  }
       }
       
-      def initialize(subject, test_result, test_description)
-        @subject = subject
+      def initialize(subject, test_result, test_description, &block)
+        @subject = subject || block
         @test_result = test_result
         @test_description = test_description
       end
@@ -52,6 +52,28 @@ module Test # :nodoc:
           Test::Reckon::Reporter.instance.add_failure(@test_description,
             "#{@subject.inspect} #{VERB_MAP[verb][!@test_result]} #{object.inspect}"
           )
+        end
+      end
+      
+      def raises(object)
+        if @test_result
+          begin
+            @subject.call
+          rescue object
+            return Test::Reckon::Reporter.instance.add_success
+          rescue Exception => e
+            return Test::Reckon::Reporter.instance.add_failure(@test_description, "Expected #{object} but got an #{e}")
+          end
+          Test::Reckon::Reporter.instance.add_failure(@test_description, "Expected #{object} but no exception was raised")
+        else
+          begin
+            @subject.call
+          rescue object
+            return Test::Reckon::Reporter.instance.add_failure(@test_description, "Rejected exception #{object} was raised")
+          rescue Exception
+            # Other exceptions except the rejected are just fine
+          end
+          Test::Reckon::Reporter.instance.add_success
         end
       end
       
@@ -138,10 +160,10 @@ ensure
   Marshal.load(locker).each { |name, value| instance_variable_set(name, value) } unless locker.nil?
 end
 
-def expects(expected_result)
-  Test::Reckon::Expectation.new(expected_result, true, @_test_description)
+def expects(expected_result=nil, &block)
+  Test::Reckon::Expectation.new(expected_result, true, @_test_description, &block)
 end
 
-def rejects(expected_result)
-  Test::Reckon::Expectation.new(expected_result, false, @_test_description)
+def rejects(expected_result=nil, &block)
+  Test::Reckon::Expectation.new(expected_result, false, @_test_description, &block)
 end

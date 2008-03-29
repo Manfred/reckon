@@ -1,13 +1,10 @@
 PROJECT_ROOT = File.expand_path('../', File.dirname(__FILE__))
 $:.unshift(File.join(PROJECT_ROOT, 'lib'))
 
-require 'pp'
+require 'rubygems' rescue nil
 
 require 'test/unit'
 require 'test/reckon'
-
-require 'rubygems' rescue nil
-require 'mocha'
 
 class Test::Unit::TestCase
   def assert_difference(expression, difference = 1, message = nil, &block)

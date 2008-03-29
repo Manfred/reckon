@@ -2,3 +2,8 @@ Reckon
 ------
 
 Reckon aims to make automated testing leaner.
+
+NOTE: If you're using any other test framework that defines the 'excepts' or 'rejects' method, you should load it before Reckon.
+
+  require 'mocha'
+  require 'test/reckon'
