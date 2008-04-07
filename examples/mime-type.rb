@@ -29,6 +29,6 @@ testing "MimeType" do
   end
   
   testing "should raise exception on blank input" do
-    expects { MimeType.parse('application/xml; charset=utf-8') }.raises(TypeError)
+    expects { MimeType.parse('') }.raises(Exception)
   end
 end
